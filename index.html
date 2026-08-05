@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Symposium Module</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-color: #0f1115;
+    --panel-bg: #1a1d24;
+    --status-bg: #15171d;
+    --border-color: #2d333b;
+    --text-main: #e6edf3;
+    --text-muted: #7d8590;
+    --accent-color: #4493f8;
+    --good-color: #3fb950;
+    --neutral-color: #d29922;
+    --bad-color: #f85149;
+    --shadow-color: rgba(0,0,0,0.4);
+    --btn-hover: rgba(255,255,255,0.05);
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'Roboto Mono', monospace;
+  }
+
+  html[data-theme="light"] {
+    --bg-color: #eef0f3;
+    --panel-bg: #ffffff;
+    --status-bg: #f7f8fa;
+    --border-color: #dde1e6;
+    --text-main: #1c2128;
+    --text-muted: #636c76;
+    --accent-color: #1868db;
+    --good-color: #1a7f37;
+    --neutral-color: #9a6700;
+    --bad-color: #cf222e;
+    --shadow-color: rgba(20,25,35,0.12);
+    --btn-hover: rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    font-family: var(--sans);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .device-frame {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px var(--shadow-color);
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 14px 20px;
+    background: var(--status-bg);
+    border-bottom: 1px solid var(--border-color);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .status-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--btn-hover);
+    color: var(--text-main);
+  }
+
+  .theme-toggle:focus-visible,
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  .theme-toggle svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .scene-content {
+    padding: 24px 20px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .context-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+    margin-bottom: 12px;
+  }
+
+  .text-bubble {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-main);
+    margin-bottom: 24px;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .text-bubble p {
+    margin-bottom: 12px;
+  }
+
+  .text-bubble p:last-child {
+    margin-bottom: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-family: var(--sans);
+    font-size: 14px;
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    line-height: 1.4;
+  }
+
+  .btn:hover {
+    background: var(--btn-hover);
+    border-color: var(--text-muted);
+  }
+
+  .btn.primary {
+    background: var(--text-main);
+    color: var(--bg-color);
+    text-align: center;
+    font-weight: 500;
+    border-color: var(--text-main);
+  }
+
+  .btn.primary:hover {
+    opacity: 0.85;
+  }
+
+  .ending-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .ending-badge.good { background: rgba(63,185,80,0.15); color: var(--good-color); }
+  .ending-badge.neutral { background: rgba(210,153,34,0.15); color: var(--neutral-color); }
+  .ending-badge.bad { background: rgba(248,81,73,0.15); color: var(--bad-color); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-bubble { animation: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="device-frame">
+    <div class="status-bar">
+      <span id="timestamp">07:00 AM</span>
+      <div class="status-right">
+        <span id="location">Home</span>
+        <button id="themeToggle" class="theme-toggle" aria-label="Switch between light and dark mode" title="Switch theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="scene-content">
+      <div class="context-tag" id="contextTag"></div>
+      <div class="text-bubble" id="sceneText"></div>
+      <div class="choices-container" id="choices"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORY = {
+    start: {
+      time: "07:30 AM", loc: "Home", tag: "Group Chat",
+      text: "<p>You wake up and check your phone. Your aunt sent a long message in the family group chat saying a new local virus is spreading, ending with 'SHARE THIS BEFORE IT GETS DELETED'.</p><p>A few relatives are already replying and getting worried.</p>",
+      choices: [
+        { label: "Search for official news to see if it's actually true.", next: "s1_verify", points: 3 },
+        { label: "Forward it to your friends just in case.", next: "s1_share", points: 0 },
+        { label: "Ignore the message and get ready for the day.", next: "s1_ignore", points: 1 }
+      ]
+    },
+    s1_verify: {
+      time: "07:35 AM", loc: "Home", tag: "Group Chat",
+      text: "<p>You do a quick search and find out it's an old hoax from three years ago. You send a link to an article debunking it, and your relatives calm down.</p>",
+      choices: [{ label: "Leave for the event", next: "s2", points: 0, type: "primary" }]
+    },
+    s1_share: {
+      time: "07:35 AM", loc: "Home", tag: "Group Chat",
+      text: "<p>You send it to your friends. A few hours later, you find out it was a fake message. You just helped spread unnecessary panic.</p>",
+      choices: [{ label: "Leave for the event", next: "s2", points: 0, type: "primary" }]
+    },
+    s1_ignore: {
+      time: "07:35 AM", loc: "Home", tag: "Group Chat",
+      text: "<p>You mute the chat. You didn't spread the rumor yourself, but your aunt keeps sending more updates and your family stays worried.</p>",
+      choices: [{ label: "Leave for the event", next: "s2", points: 0, type: "primary" }]
+    },
+
+    s2: {
+      time: "08:15 AM", loc: "Transit", tag: "Social Media",
+      text: "<p>You're on the way to the symposium. You open a social media app and see a very angry video about a local issue. You agree with the person, but some of the statistics they use sound made up.</p>",
+      choices: [
+        { label: "Scroll past it. It's too early to get into internet arguments.", next: "s2_scroll", points: 1 },
+        { label: "Leave a comment agreeing with the video.", next: "s2_react", points: 0 },
+        { label: "Check the account to see if they are a reliable source.", next: "s2_critical", points: 3 }
+      ]
+    },
+    s2_scroll: {
+      time: "08:20 AM", loc: "Transit", tag: "Social Media",
+      text: "<p>You keep scrolling. You avoid the stress, but your feed keeps showing similar content anyway.</p>",
+      choices: [{ label: "Arrive at venue", next: "s3", points: 0, type: "primary" }]
+    },
+    s2_react: {
+      time: "08:20 AM", loc: "Transit", tag: "Social Media",
+      text: "<p>You leave a comment. Because you interacted with it, the app starts pushing more aggressive, one-sided videos onto your timeline.</p>",
+      choices: [{ label: "Arrive at venue", next: "s3", points: 0, type: "primary" }]
+    },
+    s2_critical: {
+      time: "08:20 AM", loc: "Transit", tag: "Social Media",
+      text: "<p>You look at their profile and notice they only post clickbait to make people mad. You close the app and move on.</p>",
+      choices: [{ label: "Arrive at venue", next: "s3", points: 0, type: "primary" }]
+    },
+
+    s3: {
+      time: "09:00 AM", loc: "Registration Desk", tag: "Event Sign-In",
+      text: "<p>You reach the registration desk. The tablet asks you to log in with your main Facebook or Google account to print your ID. There's a long terms and conditions page that no one is reading.</p>",
+      choices: [
+        { label: "Type in your name and email manually instead of linking an account.", next: "s3_manual", points: 1 },
+        { label: "Ask the staff if they can just give you a blank paper ID.", next: "s3_protect", points: 3 },
+        { label: "Log in with your account. It's faster and everyone else is doing it.", next: "s3_give", points: 0 }
+      ]
+    },
+    s3_manual: {
+      time: "09:05 AM", loc: "Registration Desk", tag: "Event Sign-In",
+      text: "<p>You type your details manually. It takes a bit longer, but you didn't have to link your entire social media profile to their system.</p>",
+      choices: [{ label: "Enter the hall", next: "s4", points: 0, type: "primary" }]
+    },
+    s3_protect: {
+      time: "09:05 AM", loc: "Registration Desk", tag: "Event Sign-In",
+      text: "<p>The staff just hands you a standard ID. You don't get the QR code feature, but your personal data is completely safe.</p>",
+      choices: [{ label: "Enter the hall", next: "s4", points: 0, type: "primary" }]
+    },
+    s3_give: {
+      time: "09:05 AM", loc: "Registration Desk", tag: "Event Sign-In",
+      text: "<p>You log in. By lunch time, you get three automated promotional emails from the event sponsors. You traded your data to save ten seconds.</p>",
+      choices: [{ label: "Enter the hall", next: "s4", points: 0, type: "primary" }]
+    },
+
+    s4: {
+      time: "10:30 AM", loc: "Main Hall", tag: "Message",
+      text: "<p>You are listening to a talk when a groupmate messages you. They are making a presentation and found a good image on Google, but it has a watermark. They ask if they should just crop it out.</p>",
+      choices: [
+        { label: "Tell them to just crop it. No one is going to notice during the presentation.", next: "s4_crop", points: 0 },
+        { label: "Tell them to use a free stock photo site instead.", next: "s4_cc", points: 3 },
+        { label: "Tell them to use it but put a link to the website at the bottom.", next: "s4_link", points: 1 }
+      ]
+    },
+    s4_crop: {
+      time: "10:35 AM", loc: "Main Hall", tag: "Message",
+      text: "<p>They crop it. No one in the class notices, but it's still plagiarism and a bad habit to start.</p>",
+      choices: [{ label: "Break for lunch", next: "s5", points: 0, type: "primary" }]
+    },
+    s4_cc: {
+      time: "10:35 AM", loc: "Main Hall", tag: "Message",
+      text: "<p>You send them a link to a site with free images. The slides look fine and you don't break any copyright rules.</p>",
+      choices: [{ label: "Break for lunch", next: "s5", points: 0, type: "primary" }]
+    },
+    s4_link: {
+      time: "10:35 AM", loc: "Main Hall", tag: "Message",
+      text: "<p>They keep the image and add a small link. It's not exactly fair use, but at least they tried to give credit.</p>",
+      choices: [{ label: "Break for lunch", next: "s5", points: 0, type: "primary" }]
+    },
+
+    s5: {
+      time: "12:15 PM", loc: "Cafeteria", tag: "Email Alert",
+      text: "<p>You are eating lunch and check your email. You have a message saying you won a 'VIP Symposium Package'. It asks you to click a link and pay a 50 peso fee for processing.</p>",
+      choices: [
+        { label: "Check the sender's email address to see if it's official.", next: "s5_report", points: 3 },
+        { label: "Ignore it and continue eating.", next: "s5_ignore", points: 1 },
+        { label: "Click the link. It's only 50 pesos.", next: "s5_click", points: 0 }
+      ]
+    },
+    s5_report: {
+      time: "12:20 PM", loc: "Cafeteria", tag: "Email Alert",
+      text: "<p>You check the sender and see it's a random string of numbers. It's a phishing scam. You delete it immediately.</p>",
+      choices: [{ label: "Return to sessions", next: "s6", points: 0, type: "primary" }]
+    },
+    s5_ignore: {
+      time: "12:20 PM", loc: "Cafeteria", tag: "Email Alert",
+      text: "<p>You just delete the email. You don't get scammed, but you didn't look into it either.</p>",
+      choices: [{ label: "Return to sessions", next: "s6", points: 0, type: "primary" }]
+    },
+    s5_click: {
+      time: "12:20 PM", loc: "Cafeteria", tag: "Email Alert",
+      text: "<p>You click the link and it asks for your GCash pin. You realize it's a scam right before typing it in and close the tab.</p>",
+      choices: [{ label: "Return to sessions", next: "s6", points: 0, type: "primary" }]
+    },
+
+    s6: {
+      time: "02:30 PM", loc: "Workshop Room", tag: "Online Thread",
+      text: "<p>You look up the event's hashtag online. A speaker messed up their words earlier, and people are making fun of them. Some users are making mean edits and tagging the speaker.</p>",
+      choices: [
+        { label: "Retweet one of the lighter jokes. It's not that deep.", next: "s6_join", points: 0 },
+        { label: "Close the app. You don't want to get involved.", next: "s6_lurk", points: 1 },
+        { label: "Report the worst posts and send the speaker a nice message.", next: "s6_support", points: 3 }
+      ]
+    },
+    s6_join: {
+      time: "02:35 PM", loc: "Workshop Room", tag: "Online Thread",
+      text: "<p>You retweet it. You get a few likes, but you later realize you just helped bully someone online.</p>",
+      choices: [{ label: "Attend closing ceremony", next: "s7", points: 0, type: "primary" }]
+    },
+    s6_lurk: {
+      time: "02:35 PM", loc: "Workshop Room", tag: "Online Thread",
+      text: "<p>You close the app. It's easier to just stay out of the drama, even if the harassment continues.</p>",
+      choices: [{ label: "Attend closing ceremony", next: "s7", points: 0, type: "primary" }]
+    },
+    s6_support: {
+      time: "02:35 PM", loc: "Workshop Room", tag: "Online Thread",
+      text: "<p>You report the accounts. The speaker actually replies to your message later to say thank you.</p>",
+      choices: [{ label: "Attend closing ceremony", next: "s7", points: 0, type: "primary" }]
+    },
+
+    s7: {
+      time: "04:00 PM", loc: "Main Stage", tag: "Q&A",
+      text: "<p>The event is ending. The host asks the audience: 'How would you define someone who is media and information literate?'</p>",
+      choices: [
+        { label: "Someone who reads a lot of news articles online.", next: "s7_news", points: 1 },
+        { label: "Someone who knows how to use all the new apps and gadgets.", next: "s7_tech", points: 0 },
+        { label: "Someone who checks their sources and thinks before they post.", next: "s7_critical", points: 3 }
+      ]
+    },
+    s7_news: {
+      time: "04:05 PM", loc: "Main Stage", tag: "Q&A",
+      text: "<p>Reading a lot is good, but it's not enough if you don't know how to check if the articles are actually true.</p>",
+      choices: [{ label: "View Results", next: "score_gate", points: 0, type: "primary" }]
+    },
+    s7_tech: {
+      time: "04:05 PM", loc: "Main Stage", tag: "Q&A",
+      text: "<p>Knowing how to use technology just means you have digital skills. Literacy means knowing how to use those tools responsibly.</p>",
+      choices: [{ label: "View Results", next: "score_gate", points: 0, type: "primary" }]
+    },
+    s7_critical: {
+      time: "04:05 PM", loc: "Main Stage", tag: "Q&A",
+      text: "<p>That's the main point. It's not just about using the internet, but understanding the information and knowing what is ethical.</p>",
+      choices: [{ label: "View Results", next: "score_gate", points: 0, type: "primary" }]
+    },
+
+    ending_good: {
+      time: "05:00 PM", loc: "Event Concluded",
+      badge: "good", title: "Information Literate",
+      text: "<p>Your choices show you understand media and information literacy. You check facts before reacting, protect your personal data, respect copyright, and treat people properly online.</p><p>Check the scoring table in the E-Magazine to see the breakdown of your points.</p>"
+    },
+    ending_neutral: {
+      time: "05:00 PM", loc: "Event Concluded",
+      badge: "neutral", title: "Passive Consumer",
+      text: "<p>Your choices show a passive approach. You didn't do anything majorly wrong, but you mostly chose convenience over checking facts or protecting your data.</p><p>Check the scoring table in the E-Magazine to see how you can improve your habits.</p>"
+    },
+    ending_bad: {
+      time: "05:00 PM", loc: "Event Concluded",
+      badge: "bad", title: "Vulnerable to Noise",
+      text: "<p>Your choices show you act mostly on impulse. By not checking sources or thinking about privacy, you make yourself vulnerable to fake news, scams, and bad digital habits.</p><p>Check the scoring table in the E-Magazine to review the basics of media literacy.</p>"
+    }
+  };
+
+  let currentScore = 0;
+
+  const el = {
+    timestamp: document.getElementById("timestamp"),
+    location: document.getElementById("location"),
+    contextTag: document.getElementById("contextTag"),
+    sceneText: document.getElementById("sceneText"),
+    choices: document.getElementById("choices")
+  };
+
+  function renderNode(nodeId) {
+    if (nodeId === "score_gate") {
+      if (currentScore >= 17) nodeId = "ending_good";
+      else if (currentScore >= 10) nodeId = "ending_neutral";
+      else nodeId = "ending_bad";
+    }
+
+    const node = STORY[nodeId];
+
+    el.timestamp.textContent = node.time;
+    el.location.textContent = node.loc;
+
+    if (node.badge) {
+      el.contextTag.innerHTML = `<span class="ending-badge ${node.badge}">${node.title}</span>`;
+      el.sceneText.innerHTML = node.text + `<p style="color:var(--text-muted); margin-top:16px; font-family:var(--mono); font-size:12px;">FINAL SCORE: ${currentScore} / 21</p>`;
+
+      el.choices.innerHTML = "";
+      const restartBtn = document.createElement("button");
+      restartBtn.className = "btn";
+      restartBtn.textContent = "Restart Module";
+      restartBtn.onclick = () => { currentScore = 0; renderNode("start"); };
+      el.choices.appendChild(restartBtn);
+    } else {
+      el.contextTag.textContent = node.tag;
+      el.sceneText.innerHTML = node.text;
+      el.choices.innerHTML = "";
+
+      node.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.className = `btn ${choice.type === 'primary' ? 'primary' : ''}`;
+        btn.textContent = choice.label;
+        btn.onclick = () => {
+          if (choice.points !== undefined) currentScore += choice.points;
+          renderNode(choice.next);
+        };
+        el.choices.appendChild(btn);
+      });
+    }
+  }
+
+  renderNode("start");
+
+  const ICONS = {
+    dark: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>',
+    light: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+  };
+
+  const root = document.documentElement;
+  const themeIcon = document.getElementById("themeIcon");
+  const themeToggle = document.getElementById("themeToggle");
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    themeIcon.innerHTML = theme === "light" ? ICONS.light : ICONS.dark;
+    themeToggle.setAttribute("title", theme === "light" ? "Switch to dark mode" : "Switch to light mode");
+  }
+
+  const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+  applyTheme(prefersLight ? "light" : "dark");
+
+  themeToggle.addEventListener("click", () => {
+    const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    applyTheme(next);
+  });
+</script>
+
+</body>
+</html>
